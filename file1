@@ -1,0 +1,57 @@
+// Elementor forms custom webhook
+add_action('elementor_pro/forms/new_record', function( $record, $handler ) {
+	//make sure its our form
+	$form_name = $record->get_form_settings('form_name');
+	if ( 'Virtual Care Appointment' !== $form_name ) {
+		return;
+	}
+
+	$raw_fields = $record->get( 'fields' );
+
+    $ch = curl_init( 'https://apiv2.healthespresso.ca/v1/register/clinic' );
+    # Setup request to send json via POST.
+    $payload = json_encode( $raw_fields );
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    # Return response instead of printing.
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    # Send request.
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $redirect_to='https://preview.measuremarketing.net/durhamvirtualcare.com/thank-you/';
+    
+    // if($result[code]!='200'){
+    //     $handler->add_error( $field['token'], $result[message] );
+    // }else{
+        $handler->add_error( $field['token'], $result[message] );
+    //}
+    
+} );
+-----------------------------------------------------------------------------------------------------------------------
+// A send custom WebHook
+add_action( 'elementor_pro/forms/new_record', function( $record, $handler ) {
+    //make sure its our form
+    $form_name = $record->get_form_settings( 'form_name' );
+
+    // Replace MY_FORM_NAME with the name you gave your form
+    if ( 'MY_FORM_NAME' !== $form_name ) {
+        return;
+    }
+
+    $raw_fields = $record->get( 'fields' );
+    $fields = [];
+    foreach ( $raw_fields as $id => $field ) {
+        $fields[ $id ] = $field['value'];
+    }
+
+    // Replace HTTP://YOUR_WEBHOOK_URL with the actuall URL you want to post the form to
+    wp_remote_post( 'HTTP://YOUR_WEBHOOK_URL', [
+        'body' => $fields,
+    ]);
+}, 10, 2 );
+
+https://developers.elementor.com/forms-api/
+https://developer.wordpress.org/reference/functions/wp_remote_post/
+https://developer.wordpress.org/reference/functions/wp_remote_request/
+https://wordpress.stackexchange.com/questions/318854/sending-post-request-from-server
+https://developer.wordpress.org/plugins/http-api/

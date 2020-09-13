@@ -49,7 +49,62 @@ add_action( 'elementor_pro/forms/new_record', function( $record, $handler ) {
         'body' => $fields,
     ]);
 }, 10, 2 );
+----------------------------------------------------------------------------------------------------------
 
+<script>
+jQuery(document).ready(function (abc1) {
+jQuery("#search_visit").on('submit',(function(abc1) {
+const capitalize = (s) => {
+if (typeof s !== 'string') return ''
+return s.charAt(0).toUpperCase() + s.slice(1)
+}
+jQuery("#load-gif").show();
+abc1.preventDefault();
+jQuery.ajax({
+url: "https://apiv2.healthespresso.ca/v1/passcode/user",
+type: "POST",
+dataType: 'json',
+data: jQuery('#search_visit').serialize(),
+cache: false,
+processData:false,
+success: function(data){
+jQuery(".elementor-field-group-gender input[type=radio]").val([capitalize(data.gender)]);
+jQuery('#form-field-clinic_id').val(data.clinic_id);
+jQuery('#form-field-first_name').val(data.first_name);
+jQuery('#form-field-last_name').val(data.last_name);
+jQuery('#form-field-date_of_birth').val(data.date_of_birth);
+jQuery('#form-field-email').val(data.email);
+jQuery('#form-field-age').val(data.age);
+jQuery('#form-field-phone_number').val(data.phone_number);
+jQuery('#form-field-blood_type').val(data.blood_type);
+jQuery('#form-field-street_address').val(data.street_address);
+jQuery('#form-field-city').val(data.city);
+jQuery('#form-field-province').val(data.province);
+jQuery('#form-field-postal_code').val(data.postal_code);
+jQuery('#form-field-health_card_number').val(data.health_card_number);
+jQuery('#form-field-family_doctor_if_yes').val(data.family_doctor_if_yes);
+jQuery(".elementor-field-group-regular_family_doctor input[type=radio]").val([capitalize(data.regular_family_doctor)]);
+jQuery(".elementor-field-group-medical_problem input[type=radio]").val([capitalize(data.medical_problem)]);   
+jQuery('#form-field-medical_problem_if_yes').val(data.medical_problem_if_yes);  
+jQuery(".elementor-field-group-medications input[type=radio]").val([capitalize(data.medications)]);   
+jQuery('#form-field-medications_if_yes').val(data.medications_if_yes);
+jQuery(".elementor-field-group-allergies input[type=radio]").val([capitalize(data.allergies)]);   
+jQuery('#form-field-allergies_if_yes').val(data.allergies_if_yes);
+jQuery('#form-field-token').val(jQuery('#in_visit_token').val());
+jQuery(".elementor-field-group-smoker input[type=radio]").val([capitalize(data.smoker)]);
+jQuery('.form-control-feedback').html('');
+jQuery("#load-gif").hide();
+},
+error: function(){
+jQuery('.form-control-feedback').html('<p style="color:red;">Invalid Token</p>');
+jQuery("#load-gif").hide();
+}          
+});
+}));
+});
+</script>
+
+-----------------------------------------------------------------------------------------------------------------------------------
 https://developers.elementor.com/forms-api/
 https://developer.wordpress.org/reference/functions/wp_remote_post/
 https://developer.wordpress.org/reference/functions/wp_remote_request/

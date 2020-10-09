@@ -39,7 +39,7 @@ function find_and_replace(){
 					<?php
 					    $args = array(  
 					        'post_type' => array(
-											'locations',
+											'locations', pages, posts
 										), 
 					        'posts_per_page' => -1
 					    );

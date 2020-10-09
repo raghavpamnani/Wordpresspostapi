@@ -1,0 +1,89 @@
+add_action( 'admin_menu', 'register_find_and_replace' );
+function register_find_and_replace() {
+  add_menu_page( 'Find and replace', 'Find and replace', 'manage_options', 'findandreplace', 'find_and_replace', 'dashicons-welcome-widgets-menus', 90 );
+}
+
+function find_and_replace(){
+	?>
+	<h1>Find and Replace</h1>
+	<div class="formwrap">
+		<form method="post">
+			
+			<table>
+				  <tr>
+					  <th>Find Text</th>
+					<th>Rplace Text</th>
+
+				  </tr>
+				  <tr>
+					<td><input type="text" name="findtext[]" placeholder="Find Text 1"></td>
+					<td><input type="text" name="replacetext[]" placeholder="Replace Text 1"></td>
+
+				  </tr>
+				<tr>
+					<td><input type="text" name="findtext[]" placeholder="Find Text 2"></td>
+					<td><input type="text" name="replacetext[]" placeholder="Replace Text 2"></td>
+
+				  </tr>
+				<tr>
+					<td><input type="text" name="findtext[]" placeholder="Find Text 3"></td>
+					<td><input type="text" name="replacetext[]" placeholder="Replace Text 3"></td>
+
+				  </tr>
+
+				</table>
+			
+			<div class="fieldgroup">
+				<label>Select Location</label>
+				<select name="findlocation[]" multiple>
+					<?php
+					    $args = array(  
+					        'post_type' => array(
+											'locations',
+										), 
+					        'posts_per_page' => -1
+					    );
+
+					    $loop = new WP_Query( $args ); 
+					        
+					    while ( $loop->have_posts() ) : $loop->the_post(); 
+					        ?>
+					        <option value="<?php the_id(); ?>"><?php the_title(); ?></option>
+					        <?php
+					    endwhile;
+
+					    wp_reset_postdata(); 
+					?>
+				</select>
+			</div>
+			<div class="fieldgroup">
+				<input type="submit" name="formsubmit" class="button button-primary button-large" value="Submit">
+			</div>
+		</form>
+	</div>
+	<?php
+	global $wpdb;
+	if(isset($_POST['findtext'])){
+		$findtext = $_POST['findtext'];
+		$replacetext = $_POST['replacetext'];
+
+		if(!empty($_POST['findlocation'])){
+			$findlocation = implode(",",$_POST['findlocation']);
+		}
+
+		if($findtext == ""){
+			echo "Please enter find text";
+		}elseif ($replacetext == "") {
+			echo "Please enter replace text";
+		}elseif (empty($findlocation)) {
+			echo "Please select location";
+		}else{
+			$tablename=$wpdb->prefix . 'postmeta';
+			foreach($findtext as $key => $value) {
+				
+			$wpdb->query("UPDATE  `$tablename` SET  `meta_value` = REPLACE(`meta_value`, '".$value."', '".$replacetext[$key]."') WHERE  `meta_value` LIKE '%".$value."%' AND post_id in (".$findlocation.")");	
+				
+		}
+		}	
+	}
+}

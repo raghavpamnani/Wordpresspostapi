@@ -1,0 +1,68 @@
+// First Create A Template file
+
+<?php
+
+//Template Name: List Template
+get_header() ; ?>
+
+
+
+<div class="container">
+	<h1 style="text-align:center">
+		
+	<?php echo the_title(); ?></h1>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+		<th scope="col">Page Id</th>
+      <th scope="col">Page Name</th>
+      <th scope="col">Operations</th>
+    </tr>
+  </thead>
+<?php
+	$pages = get_pages(); 
+foreach ( $pages as $page ) {
+	$id =$page-> ID;
+	$title = $page->post_title; 
+	  $content = apply_filters('the_content', $page_data->post_content); 
+    $delLink = wp_nonce_url( get_bloginfo('wpurl') . "/wp-admin/post.php?action=delete&post=" . $page->ID, 'delete-post_' . $page->ID);
+    $option = '<button type="button" class="btn btn-danger">';
+    $option .= '<a href="' . $delLink . '">';
+    $option .= 'Delete';
+    $option .= '</a>';
+    $option .= '</button>';
+    ///echo $option;
+   ?>
+
+	
+
+  <tbody>
+    <tr>
+      <td><?php echo $id; ?></td>
+      <td><?php echo '<p>'.$title.'</p>';  ?></td>
+		<td> <?php echo $option; ?></td>
+
+    </tr>
+    
+
+<?php
+
+}
+?>
+
+	    </tbody>
+</table>
+<?php get_footer(); ?>
+
+----------------------------------------------------------------------------------------------------------
+
+<?php
+$url = get_bloginfo('url');
+  if (current_user_can('edit_post', $post->ID)){
+    echo '<a class="delete-post" href="';
+    echo wp_nonce_url("$url/wp-admin/post.php?action=trash&post=$id", 'delete-post_' . $post->ID);
+    echo '">Delete post</a>';
+  }
+?>

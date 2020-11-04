@@ -66,3 +66,71 @@ $url = get_bloginfo('url');
     echo '">Delete post</a>';
   }
 ?>
+
+---------------------------------------------------------------------------------------------------------------
+
+
+function latestpost_func( $atts ){
+?>
+
+
+
+<table class="table">
+  <thead>
+    <tr>
+		<th scope="col">No.</th>
+      <th scope="col">Page Name</th>
+		<th scope="col">Action</th>
+    </tr>
+  </thead>
+	
+	<?php
+	global $wp_query;	
+	global $post;
+	$i=1;
+	
+	$pages = get_posts( array( 'post_type' => 'page', 'posts_per_page' =>10, 'orderby' => 'date', 'order' => 'ASC' ) );
+	foreach ( $pages as $page ) {
+		$s = $i++;
+		$title = $page->post_title;
+		 $link = get_permalink($page);
+	$id =$page-> ID;
+	$deletep = wp_nonce_url( get_bloginfo('wpurl') . "/wp-admin/post.php?action=delete&post=" . $page->ID, 'delete-post_' . $page->ID);
+    $var = '<button type="button" class="btn btn-danger">';
+    $var .= '<a href="' . $deletep . '">';
+    $var .= 'Delete';
+    $var .= '</a>';
+    $var .= '</button>';
+	?>
+
+
+  <tbody>
+    <tr>
+      <td><?php echo $s; ?></td>
+		<td><a href="<?php echo $link; ?>"><?php echo  $title; ?></a></td>
+		<td> <?php echo $var; ?></td>
+	  </tr>
+
+	<?php	} ?>
+
+			    </tbody>
+</table>
+		
+		
+
+
+<?php 
+}
+ add_shortcode( 'latestpost', 'latestpost_func' );
+
+add_action( 'template_redirect', 'redirect_to_specific_page' );
+
+function redirect_to_specific_page() {
+
+if ( is_page('page-view') && ! is_user_logged_in() ) {
+
+wp_redirect( 'https://preview.measuremarketing.net/quadcitycustomsigns.com/', 301 ); 
+  exit;
+    }
+}
+----------------------------------------------------------------------------------------------------

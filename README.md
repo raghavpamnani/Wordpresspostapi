@@ -1,1 +1,1 @@
-# Wordpress Tutorials
+# WordPress Tutorials

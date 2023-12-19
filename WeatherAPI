@@ -1,0 +1,35 @@
+// Function to fetch weather data using OpenWeatherMap API
+function get_weather_data() {
+    // Replace 'YOUR_API_KEY' with your OpenWeatherMap API key
+    $api_key = 'ab9469fe751a09ec78c1a01bf18dadd9';
+    $city = 'London, UK'; // Replace 'Bhopal' with the city you want
+
+    // API URL for current weather data
+    $api_url = "https://api.openweathermap.org/data/2.5/weather?q={$city}&appid={$api_key}";
+
+    // Fetch weather data from the API
+    $response = wp_remote_get($api_url);
+
+    // Check if the request was successful
+    if (!is_wp_error($response) && $response['response']['code'] === 200) {
+        $data = json_decode($response['body']);
+
+        // Get temperature in Celsius
+        $temperature = ($data->main->temp - 273.15);
+
+        // Get weather description
+        $description = $data->weather[0]->description;
+
+        // Output weather data
+        $output = "<div class='weather-widget'>";
+        $output .= "<h2>Current Weather in {$city}</h2>";
+        $output .= "<p>Temperature: " . number_format($temperature, 1) . "°C</p>";
+        $output .= "<p>Description: {$description}</p>";
+        $output .= "</div>";
+
+        return $output;
+    } else {
+        return 'Failed to fetch weather data.';
+    }
+}
+add_shortcode('display_weather', 'get_weather_data');
